@@ -1,0 +1,15 @@
+{
+  "name": "circle-shooter-game",
+  "version": "0.1.0",
+  "description": "First game project using socket.io.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "James Kayes",
+  "license": "SEE LICENSE IN licenses",
+  "dependencies": {
+    "express": "^4.15.4",
+    "socket.io": "^2.0.3"
+  }
+}
