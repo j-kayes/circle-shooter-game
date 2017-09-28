@@ -15,9 +15,9 @@ function preload() {
     cursors = game.input.keyboard.createCursorKeys();
 }
 function create() {
-    game.world.resize(10000, 10000);
+    game.world.resize(5000, 5000);
     //game.add.tileSprite(0, 0, 256, 256, 'background'); // Only in top left
-    game.pickups = generatePickups(500);
+    game.pickups = generatePickups(1000);
 
     var ranX = Math.random() * game.world.width;
     var ranY = Math.random() * game.world.height;

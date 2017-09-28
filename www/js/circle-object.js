@@ -15,6 +15,6 @@ class CircleObject {
 
     draw() {
         this.game.drawObject.beginFill(this.colour, 1);
-        this.circleImage = this.game.drawObject.drawCircle(this.gameObject.x-this.radius, this.gameObject.y-this.radius, 2*this.radius);
+        this.circleImage = this.game.drawObject.drawCircle(this.gameObject.x, this.gameObject.y, 2*this.radius);
     }
 }
