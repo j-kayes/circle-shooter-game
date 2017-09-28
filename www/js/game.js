@@ -37,12 +37,18 @@ function update() {
     for(var i = 0; i < game.pickups.length; i++) {
         if(game.pickups[i].gameObject.x < (game.camera.x + game.width) && game.pickups[i].gameObject.x > game.camera.x) {
             if(game.pickups[i].gameObject.y < (game.camera.y + game.height) && game.pickups[i].gameObject.y > game.camera.y) {
-                game.pickups[i].draw();
+                if(detectCollisionCircle(game.player.gameObject.position, game.player.radius, game.pickups[i].gameObject.position, game.pickups[i].radius)) {
+                    game.pickups[i].gameObject.destroy();
+                    game.pickups.splice(i, 1);
+                }
+                else {
+                    game.pickups[i].draw();
+                }
             }
         }
     }
 
-    game.player.draw();
+    game.player.draw()
 }
 function render() {
     game.drawObject.clear();
@@ -72,4 +78,14 @@ function createCircleObject(position, radius, colour) {
 }
 function collectableCollision(object1, object2) {
     console.log("collision");
+}
+function detectCollisionCircle(position1, radius1, position2, radius2) {
+    let distanceSqr = Math.pow((position2.x - position1.x), 2) + Math.pow((position2.y - position1.y), 2);
+
+    if(distanceSqr < Math.pow((radius1 + radius2), 2)) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
