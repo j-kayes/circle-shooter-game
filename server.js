@@ -13,7 +13,7 @@ const server = app.listen(process.env.PORT || 3000, function () {
 // Pass this server to socket.io: 
 const io = require('socket.io')(server);
 
-var playersData = [];
+var playersData = []; // To hold the mass and positions of the other players.
 io.on('connection', function(socket) {  
     console.log('Player connected');
     socket.on('disconnect', function(){
@@ -34,7 +34,7 @@ io.on('connection', function(socket) {
     });
     socket.on('updatePlayer', function(playerData){
         for(let i = 0; i < playersData.length; i++) {
-            if(playersData[i].id === socket.id) {
+            if(playersData[i].id === playerData.id) {
                 playersData[i] = playerData;
             }
         }

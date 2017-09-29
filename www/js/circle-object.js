@@ -4,6 +4,7 @@ class CircleObject {
         this.radius = radius;
         this.gameObject = game.add.sprite(position.x, position.y, null);
 
+        // TODO: Can speed this up by not adding the physics to the pickups:
         game.physics.arcade.enable(this.gameObject);
         this.gameObject.body.setCircle(radius);
         this.gameObject.body.bounce = 0.2;
@@ -16,5 +17,8 @@ class CircleObject {
     draw() {
         this.game.drawObject.beginFill(this.colour, 1);
         this.circleImage = this.game.drawObject.drawCircle(this.gameObject.x, this.gameObject.y, 2*this.radius);
+    }
+    getBody() {
+        return this.gameObject.body;
     }
 }
