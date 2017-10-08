@@ -68,6 +68,11 @@ function update() {
             }
         }
     }
+    game.otherPlayersMap.forEach(function(value) {
+        if(onScreen(value.gameObject)) {
+            value.draw();
+        }
+    });
     let playerPos = { x: game.player.gameObject.position.x, y: game.player.gameObject.position.y };
     let playerData = { id: socket.id, position: playerPos, mass: game.player.mass};
     socket.emit('updatePlayer', playerData); // Send player data to server.
@@ -83,7 +88,7 @@ function update() {
                         otherPlayer.gameObject.y = serverData[i].position.y;
                         otherPlayer.mass = serverData[i].mass;
                         otherPlayer.radius = Math.sqrt(otherPlayer.mass) + radiusAtZero;
-                        otherPlayer.draw();
+                        //otherPlayer.draw();
                     }
                     catch(e) {
                         console.log(e);
