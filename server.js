@@ -4,7 +4,7 @@ var app = express();
 // Serve files in this directory:
 app.use(express.static(__dirname + '/www'));
 
-// use express to start listening on port 3000 and then get a reference to the server:
+// Use express to start listening on port 3000 and then get a reference to the server:
 const server = app.listen(process.env.PORT || 3000, function () {  
     var port = server.address().port;
     console.log('Server running on port %s', port);
@@ -13,7 +13,7 @@ const server = app.listen(process.env.PORT || 3000, function () {
 // Pass this server to socket.io: 
 const io = require('socket.io')(server);
 
-var playersData = []; // To hold the mass and positions of the other players.
+var playersData = []; // To hold the mass and positions of all the players.
 io.on('connection', function(socket) {  
     console.log('Player connected');
     socket.on('disconnect', function(){

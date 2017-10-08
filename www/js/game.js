@@ -1,5 +1,5 @@
 var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
-var socket = io.connect('localhost:3000'); // Pass in the server address. 
+var socket = io.connect(); // Pass in the server address. 
 game.socket = socket;
 game.pickups = [];
 game.otherPlayersMap = new Map();
@@ -82,8 +82,8 @@ function update() {
                         otherPlayer.gameObject.x = serverData[i].position.x;
                         otherPlayer.gameObject.y = serverData[i].position.y;
                         otherPlayer.mass = serverData[i].mass;
+                        otherPlayer.radius = Math.sqrt(otherPlayer.mass) + radiusAtZero;
                         otherPlayer.draw();
-                        console.log(otherPlayer);
                     }
                     catch(e) {
                         console.log(e);
