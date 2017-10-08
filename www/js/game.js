@@ -2,14 +2,17 @@ var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.i
 var socket = io.connect(); // Pass in the server address. 
 game.socket = socket;
 game.pickups = [];
+game.pickupsData = [];
 game.otherPlayersMap = new Map();
-game.otherPlayersData = [];
+//game.otherPlayersData = [];
 
 const playerColour = 0xFFFFFF;
 const pickupColours = [0xFF0000, 0x00FF00, 0x0000FF];
-const pickupRadius = 5;
 const radiusAtZero = 10; // Radius of the player when the mass is 0.
 const initialPlayerMass = 25;
+
+const MAP_WIDTH = 5000;
+const MAP_HEIGHT = 5000;
 
 socket.on('newPlayer', function(playerData) {
 
@@ -18,17 +21,40 @@ socket.on('newPlayer', function(playerData) {
     game.otherPlayersMap.set(playerData.id, newPlayer);
 
 });
+socket.on('removePlayer', function(id) {
+    game.otherPlayersMap.get(id).gameObject.destroy();
+    game.otherPlayersMap.delete(id);
+});
+socket.on('removePickup', function(pId) {
+    for(let i = 0; i < game.pickups.length; i++) {
+        if(game.pickups[i].pId === pId) {
+            game.pickups[i].gameObject.destroy();
+            game.pickups.splice(i, 1);
+        }
+        if(game.pickupsData[i].pId === pId) {
+            game.pickupsData.splice(i, 1);
+        }
+    }
+});
+
 function preload() {
     game.load.image('background', 'assets/background.png');
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.drawObject = game.add.graphics(0, 0);
 
     cursors = game.input.keyboard.createCursorKeys();
+
+    socket.emit('getPickupData', null, function(pickups) {
+        for(let i = 0; i < pickups.length; i++) {
+            let pickup = pickups[i];
+            game.pickups.push(new CircleObject(game, pickup.pos, pickup.radius, pickup.colour));
+            game.pickups[i].pId = pickup.pId;
+        }
+        game.pickupsData = pickups;
+    });
 }
 function create() {
-    game.world.resize(5000, 5000);
-    //game.add.tileSprite(0, 0, 256, 256, 'background'); // Only in top left
-    game.pickups = generatePickups(1000);
+    game.world.resize(MAP_WIDTH, MAP_HEIGHT);
 
     var ranX = Math.random() * game.world.width;
     var ranY = Math.random() * game.world.height;
@@ -59,8 +85,10 @@ function update() {
     for(let i = 0; i < game.pickups.length; i++) {
         if(onScreen(game.pickups[i].gameObject)) {
             if(detectCollisionCircle(game.player.gameObject.position, game.player.radius, game.pickups[i].gameObject.position, game.pickups[i].radius)) {
+                socket.emit('removePickup', game.pickupsData[i].pId);
                 game.pickups[i].gameObject.destroy();
                 game.pickups.splice(i, 1);
+                game.pickupsData.splice(i, 1);
                 game.player.mass += 8;
             }
             else {
@@ -100,27 +128,11 @@ function update() {
 
     game.player.draw()
     game.player.radius = Math.sqrt(game.player.mass) + radiusAtZero;
+
+    
 }
 function render() {
     game.drawObject.clear();
-}
-function generatePickups(number) {
-    let pickups = [];
-    for(let i = 0; i < number; i++) {
-        let random = Math.random();
-        let ranX = Math.random() * game.world.width;
-        let ranY = Math.random() * game.world.height;
-        if(random < 0.4) {
-            pickups.push(new CircleObject(game, { x: ranX, y: ranY },  pickupRadius, pickupColours[0]));
-        }
-        else if(random < 0.8) {
-            pickups.push(new CircleObject(game, { x: ranX, y: ranY },  pickupRadius, pickupColours[1]));
-        }
-        else{
-            pickups.push(new CircleObject(game, { x: ranX, y: ranY },  pickupRadius, pickupColours[2]));
-        }
-    }
-    return pickups;
 }
 function createCircleObject(position, radius, colour) {
     let circle = new CircleObject(game, position, radius, colour);
