@@ -44,14 +44,6 @@ function preload() {
 
     cursors = game.input.keyboard.createCursorKeys();
 
-    socket.emit('getPickupData', null, function(pickups) {
-        for(let i = 0; i < pickups.length; i++) {
-            let pickup = pickups[i];
-            game.pickups.push(new CircleObject(game, pickup.pos, pickup.radius, pickup.colour));
-            game.pickups[i].pId = pickup.pId;
-        }
-        game.pickupsData = pickups;
-    });
 }
 function create() {
     game.world.resize(MAP_WIDTH, MAP_HEIGHT);
@@ -74,6 +66,15 @@ function create() {
                 game.otherPlayersMap.set(serverData[i].id, player);
             }
         }
+    });
+
+    socket.emit('getPickupData', null, function(pickups) {
+        for(let i = 0; i < pickups.length; i++) {
+            let pickup = pickups[i];
+            game.pickups.push(new CircleObject(game, pickup.pos, pickup.radius, pickup.colour));
+            game.pickups[i].pId = pickup.pId;
+        }
+        game.pickupsData = pickups;
     });
 }
 function update() {
