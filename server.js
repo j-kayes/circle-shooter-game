@@ -13,7 +13,12 @@ const server = app.listen(process.env.PORT || 3000, function () {
 // Pass this server to socket.io: 
 const io = require('socket.io')(server);
 
+const MAP_WIDTH = 5000;
+const MAP_HEIGHT = 5000;
+const NUM_PICKUPS = 1000;
+
 var playersData = []; // To hold the mass and positions of all the players.
+var pickupsData = []; // Holds the data for the pickup objects.
 io.on('connection', function(socket) {  
     console.log('Player connected');
     socket.on('disconnect', function(){
@@ -24,6 +29,12 @@ io.on('connection', function(socket) {
             }
         }
         socket.broadcast.emit("removePlayer", socket.id);
+    });
+
+    socket.on('getServerConsts', function(data, callback) {
+        data.gameWidth = MAP_WIDTH;
+        data.gameHeight = MAP_HEIGHT;
+        callback(data);
     });
     socket.on('newPlayer', function(playerData) {
         playersData.push(playerData);
